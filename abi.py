@@ -1,7 +1,7 @@
 import json
 
 
-abi = json.loads('''[
+ABI = json.loads('''[
   {
     "anonymous": false,
     "inputs": [
