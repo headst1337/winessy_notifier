@@ -8,53 +8,53 @@ import requests
 
 from web3 import Web3
 
-from abi import ABI
-from config import *
+from contracts.base_contract_class import BaseContractClass
+
+from utils.config import *
+from utils.node_rpc import NodeRpc
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 
-class WinessySecondMarketNotifier:
-    def __init__(self):
-        self.w3 = Web3(Web3.HTTPProvider(BSC_RPC_URL))
-        self.contract_address = CONTRACT_ADDRESS
-        self.contract = self.w3.eth.contract(address=self.contract_address, abi=ABI)
-        self.last_block_number = self.w3.eth.block_number
 
-    def run(self):
-        logging.info("Starting Winessy Second Market Notifier...")
-        threading.Thread(target=self._poll_events).start()
+class WinessyNotifierManager:
 
-    def _poll_events(self):
+    def __init__(self) -> None:
+        self.web3 = Web3(Web3.HTTPProvider(BSC_RPC_URL))
+        print(self.web3.clientVersion)
+        self.last_block_number = self.web3.eth.block_number
+
+    def run(self, func):
+        logging.info("Starting Winessy Notifier...")
+        threading.Thread(target=func).start()
+
+    def _poll_events(self, baseContractClass):
         while True:
             try:
-                latest_block_number = self.w3.eth.block_number
+                latest_block_number = self.web3.eth.block_number
                 if latest_block_number > self.last_block_number:
+                    lost_blocks = latest_block_number - self.last_block_number
                     logging.info(f"New block detected: {latest_block_number}")
-                    events = self._get_new_events()
+                    logging.info(f"Blocks for processing: {lost_blocks}")
+                    events = baseContractClass.get_new_events(latest_block_number, lost_blocks)
                     for event in events:
                         self._handle_event(event)
                     self.last_block_number = latest_block_number
             except Exception as e:
-                logging.error(f"Error while polling events: {e}")
+                logging.error(f"Error: {e}")
+                baseContractClass = BaseContractClass()
+                self.web3 = Web3(Web3.HTTPProvider(NodeRpc.get_new_rpc()))
             finally:
                 # Wait for some time before checking for new events again
                 time.sleep(10)
 
-    def _get_new_events(self):
-        events = []
-        event_filter_create = self.contract.events.CreateOrder.createFilter(fromBlock=self.last_block_number + 1)
-        event_filter_cancel = self.contract.events.CancelOrder.createFilter(fromBlock=self.last_block_number + 1)
-        event_filter_execute = self.contract.events.ExecuteOrder.createFilter(fromBlock=self.last_block_number + 1)
-        events.extend(event_filter_create.get_all_entries())
-        events.extend(event_filter_cancel.get_all_entries())
-        events.extend(event_filter_execute.get_all_entries())
-        return events
-
     def _handle_event(self, event):
+        print("_handle_event")
         event_name = event.event
         event_args = event.args
         txn_hash = event.transactionHash.hex()
+
         logging.info(f"New event detected: {event_name}, Args: {event_args}, Transaction hash: {txn_hash}")
+
         if event_name == 'CreateOrder':
             concrete_event_dto = {
                 "orderId": event_args.orderId,
@@ -66,10 +66,14 @@ class WinessySecondMarketNotifier:
             }
             event_class = CREATE_ORDER_EVENT_CLASS
             self._send_post_request(concrete_event_dto, event_class, txn_hash, notifier_id=8)
+
         elif event_name == 'CancelOrder':
-            concrete_event_dto = {"orderId": event_args.orderId}
+            concrete_event_dto = {
+                "orderId": event_args.orderId
+            }
             event_class = CANCEL_ORDER_EVENT_CLASS
             self._send_post_request(concrete_event_dto, event_class, txn_hash, notifier_id=9)
+
         elif event_name == 'ExecuteOrder':
             concrete_event_dto = {
                 "orderId": event_args.orderId,
@@ -79,6 +83,23 @@ class WinessySecondMarketNotifier:
             }
             event_class = EXECUTE_ORDER_EVENT_CLASS
             self._send_post_request(concrete_event_dto, event_class, txn_hash, notifier_id=10)
+
+        elif event_name == 'TransferFrom':
+            concrete_event_dto = {
+                "poolId": '?????????????????',
+				"tokenId": event_args.amount,
+				"from": event_args.src,
+				"to": event_args.dst
+            }
+            event_class = WINE_POOL_TRANSFER_EVENT_CLASS
+            self._send_post_request(concrete_event_dto, event_class, txn_hash, notifier_id=4)
+
+        # elif event_name == 'PayDelivery':
+        #     concrete_event_dto = {
+        #         "?": '?',
+        #     }
+        #     event_class = DELIVERY_PAY_EVENT_CLASS
+        #     self._send_post_request(concrete_event_dto, event_class, txn_hash, notifier_id=11)
         else:
             logging.warning(f"Unsupported event detected: {event_name}")
 
@@ -118,17 +139,17 @@ class WinessySecondMarketNotifier:
                 "class": "DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\CreateEvent"
             }
         }
-        # Отправить POST-запрос с требуемыми заголовками
         headers = {'Accept': 'application/json',
                 'Content-Type': 'application/json'}
-        response = requests.post(ENDPOINT_URL, headers=headers, json=data)
+        # response = requests.post(ENDPOINT_URL, headers=headers, json=data)
 
-        # Проверить ответ сервера
-        if response.ok:
-            logging.info('POST request successful!')
-        else:
-            logging.error(f'POST request failed! Status code: {response.status_code}')
+        # if response.ok:
+        #     logging.info('Successful!')
+        # else:
+        #     logging.error(f'Failed! Status code: {response.status_code}')
+
 
 if __name__ == "__main__":
-    notifier = WinessySecondMarketNotifier()
-    notifier.run()
+    notifier = WinessyNotifierManager()
+    baseContractClass = BaseContractClass()
+    notifier.run(lambda: notifier._poll_events(baseContractClass))
