@@ -13,4 +13,7 @@ CREATE_ORDER_EVENT_CLASS = 'DTO\\WinessyNotifier\\Version1\\NotifierNotification
 CANCEL_ORDER_EVENT_CLASS = 'DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WineMarketPlaceCodeCancelOrder'
 EXECUTE_ORDER_EVENT_CLASS = 'DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WineMarketPlaceCodeExecuteOrder'
 WINE_POOL_TRANSFER_EVENT_CLASS ='DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WinePoolTransfer'
+DELIVERY_CREATE_EVENT_CLASS ='DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WineDeliveryServiceCreateDeliveryTask'
+DELIVERY_SET_EVENT_CLASS = 'DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WineDeliveryServiceSetDeliveryTaskAmount'
 DELIVERY_PAY_EVENT_CLASS = 'DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WineDeliveryServicePayDeliveryTaskAmount'
+DELIVERY_FINISH_EVENT_CLASS = 'DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WineDeliveryServiceFinishDeliveryTask'

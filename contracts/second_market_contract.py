@@ -3,7 +3,10 @@ from web3 import Web3
 from abi.second_market_abi import ABI
 
 from utils.node_rpc import NodeRpc
-from utils.config import SECOND_MARKET_ADDRESS, BSC_RPC_URL
+from utils.config import SECOND_MARKET_ADDRESS
+from utils.config import CREATE_ORDER_EVENT_CLASS
+from utils.config import CANCEL_ORDER_EVENT_CLASS
+from utils.config import EXECUTE_ORDER_EVENT_CLASS
 
 
 class SecondMarketContract():
@@ -27,4 +30,37 @@ class SecondMarketContract():
     @staticmethod
     def create():
         return SecondMarketContract()
+    
+    @staticmethod
+    def get_create_order_event_data(event_args) -> tuple:
+        event_dto = {
+            "orderId": event_args.orderId,
+            "poolId": event_args.poolId,
+            "tokenId": event_args.tokenId,
+            "seller": event_args.seller,
+            "currency": event_args.currency,
+            "price": event_args.price
+        }
+        event_class = CREATE_ORDER_EVENT_CLASS
+        return event_dto, event_class
+
+    @staticmethod
+    def get_cancel_order_event_data(event_args) -> tuple:
+        event_dto = {
+            "orderId": event_args.orderId
+        }
+        event_class = CANCEL_ORDER_EVENT_CLASS
+        return event_dto, event_class
+
+    @staticmethod
+    def get_execute_order_event_data(event_args) -> tuple:
+        event_dto = {
+            "orderId": event_args.orderId,
+            "buyer": event_args.buyer,
+            "orderFee": event_args.orderFee,
+            "storageFee": event_args.storageFee
+        }
+        event_class = EXECUTE_ORDER_EVENT_CLASS
+        return event_dto, event_class
+
 

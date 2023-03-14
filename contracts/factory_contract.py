@@ -3,7 +3,7 @@ from web3 import Web3
 from abi.factrory_abi import ABI
 
 from utils.node_rpc import NodeRpc
-from utils.config import FACTORY_ADDRESS, BSC_RPC_URL
+from utils.config import FACTORY_ADDRESS
 
 
 class FactoryContract():
