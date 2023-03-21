@@ -5,10 +5,10 @@ class Event():
     Custom event data class
     """
 
-    def __init__(self, event, tx_hash, from_address, to_address, token_id, poolid):
+    def __init__(self, event, transactionHash, src, dst, tokenId, poolId):
         self.event = event
-        self.tx_hash = tx_hash
-        self.from_address = from_address
-        self.to_address = to_address
-        self.token_id = token_id
-        self.poolid = poolid
+        self.transactionHash = transactionHash
+        self.dst = dst
+        self.src = src
+        self.tokenId = tokenId
+        self.poolId = poolId

@@ -62,11 +62,11 @@ class Request:
         }
         
         self.logging.info('Test send!')
-        # response = requests.post(ENDPOINT_URL, headers=self.HEADERS, json=data)
+        response = requests.post(ENDPOINT_URL, headers=self.HEADERS, json=data)
 
-        # try:
-        #     response.raise_for_status()
-        #     self.logging.info('Successful!')
-        # except requests.exceptions.HTTPError as e:
-        #     self.logging.error(f'Failed! Status code: {response.status_code}. Error: {e}')
+        try:
+            response.raise_for_status()
+            self.logging.info('Successful!')
+        except requests.exceptions.HTTPError as e:
+            self.logging.error(f'Failed! Status code: {response.status_code}. Error: {e}')
 

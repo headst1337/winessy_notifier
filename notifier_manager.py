@@ -50,6 +50,7 @@ class WinessyNotifierManager:
         self.logging.error(f"Error: {error}")
         baseContractClass = BaseContractClass()
         self.web3 = Web3(Web3.HTTPProvider(NodeRpc.get_new_rpc()))
+        self.logging.info("Swap on other rpc")
 
     def _handle_event(self, event):
         event_name = event.event
@@ -64,7 +65,7 @@ class WinessyNotifierManager:
             'CancelOrder': (SecondMarketContract.get_cancel_order_event_data, 9),
             'ExecuteOrder': (SecondMarketContract.get_execute_order_event_data, 10),
             'CreateDeliveryRequest': (DeliveryContract.get_create_delivery_event_data, 11),
-            'SetDeliveryTaskAmount': (DeliveryContract.get_set_delivery_event_data, 12),
+            #'SetDeliveryTaskAmount': (DeliveryContract.get_set_delivery_event_data, 12),
             'PayDeliveryTaskAmount': (DeliveryContract.get_pay_delivery_event_data, 13),
             'FinishDeliveryTask': (DeliveryContract.get_finish_delivery_event_data, 14)
         }
@@ -78,6 +79,7 @@ class WinessyNotifierManager:
 
 
 if __name__ == "__main__":
+    swapNode = NodeRpc()
     notifier = WinessyNotifierManager()
     baseContractClass = BaseContractClass()
     notifier.run(notifier._poll_events, baseContractClass)

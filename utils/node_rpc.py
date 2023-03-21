@@ -2,12 +2,15 @@ from web3 import Web3
 
 from utils.config import BSC_RPC_URL
 from utils.rpc_list import RPC_LIST
+from utils.logger import Logger
 
 
 class NodeRpc:
-
+    
     @staticmethod
     def get_new_rpc() -> str:
+        logging = Logger("NodeRpcLogger")
+
         default_rpc = BSC_RPC_URL
         try:
             web3 = Web3(Web3.HTTPProvider(default_rpc))
@@ -15,7 +18,7 @@ class NodeRpc:
                 block_number = web3.eth.block_number
                 return default_rpc
         except:
-            print("Default RPC is down. Trying another one...")
+            logging.warning("Default RPC is down. Trying another one...")
             for rpc in RPC_LIST:
                 try:
                     web3 = Web3(Web3.HTTPProvider(rpc))
@@ -23,6 +26,6 @@ class NodeRpc:
                         block_number = web3.eth.block_number
                         return rpc
                 except:
-                    pass
-            print("All RPCs are down. Exiting...")
+                    pass # he-he 😊
+            logging.error("All RPCs are down. Exiting...")
             exit()
