@@ -79,7 +79,6 @@ class WinessyNotifierManager:
 
 
 if __name__ == "__main__":
-    swapNode = NodeRpc()
     notifier = WinessyNotifierManager()
     baseContractClass = BaseContractClass()
     notifier.run(notifier._poll_events, baseContractClass)

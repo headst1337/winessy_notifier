@@ -1,4 +1,4 @@
-BSC_RPC_URL = 'https://1rpc.io/bnb'
+BSC_RPC_URL = 'https://bsc-dataseed1.binance.org:443'
 
 #https://1rpc.io/bnb
 #https://bsc-dataseed3.binance.org	
