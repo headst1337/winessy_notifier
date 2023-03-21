@@ -32,7 +32,7 @@ class WinessyNotifierManager:
             except Exception as e:
                 self._handle_rpc_error(e, baseContractClass)
             finally:
-                time.sleep(5)
+                time.sleep(10)
 
     def _process_new_blocks(self, baseContractClass):
         latest_block_number = self.web3.eth.block_number
