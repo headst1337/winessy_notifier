@@ -38,8 +38,7 @@ class WinessyNotifierManager:
         latest_block_number = self.web3.eth.block_number
         if latest_block_number > self.last_block_number:
             lost_blocks = latest_block_number - self.last_block_number
-            self.logging.info(f"New block detected: {latest_block_number}")
-            self.logging.info(f"Blocks for processing: {lost_blocks}")
+            self.logging.info(f"New block detected: {latest_block_number}. Blocks for processing: {lost_blocks}")
             events = baseContractClass.get_new_events(
                 latest_block_number, lost_blocks)
             for event in events:
