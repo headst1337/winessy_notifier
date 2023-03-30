@@ -10,6 +10,7 @@ from utils.config import DELIVERY_CREATE_EVENT_CLASS
 from utils.config import DELIVERY_CREATE_EVENT_CLASS
 from utils.config import DELIVERY_PAY_EVENT_CLASS
 from utils.config import DELIVERY_FINISH_EVENT_CLASS
+from utils.config import DELIVERY_CANCEL_EVENT_CLASS
 
 
 class DeliveryContract():
@@ -87,5 +88,5 @@ class DeliveryContract():
             "poolId": event_args.poolId,
             "tokenId": event_args.tokenId
         }
-        event_class = DELIVERY_FINISH_EVENT_CLASS
+        event_class = DELIVERY_CANCEL_EVENT_CLASS
         return event_dto, event_class

@@ -22,3 +22,5 @@ DELIVERY_CREATE_EVENT_CLASS ='DTO\\WinessyNotifier\\Version1\\NotifierNotificati
 DELIVERY_SET_EVENT_CLASS = 'DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WineDeliveryServiceSetDeliveryTaskAmount'
 DELIVERY_PAY_EVENT_CLASS = 'DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WineDeliveryServicePayDeliveryTaskAmount'
 DELIVERY_FINISH_EVENT_CLASS = 'DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WineDeliveryServiceFinishDeliveryTask'
+DELIVERY_CANCEL_EVENT_CLASS = 'DTO\\WinessyNotifier\\Version1\\NotifierNotification\\Request\\ConcreteEvent\\WineDeliveryServiceCancelDeliveryTask'
+
