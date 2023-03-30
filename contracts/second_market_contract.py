@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from web3 import Web3
 
 from abi.second_market_abi import ABI
@@ -17,18 +19,27 @@ class SecondMarketContract():
         self.abi = ABI
         self.contract = self.web3.eth.contract(address=self.address, abi=self.abi)
 
+    def _get_event_entries(self, event, from_block, to_block) -> list:
+        event_filter = event.createFilter(fromBlock=from_block, toBlock=to_block)
+        return event_filter.get_all_entries()
+
     def get_new_events(self, last_block_number, lost_blocks) -> list:
-        events = []
-        event_filter_create = self.contract.events.CreateOrder.createFilter(fromBlock=last_block_number - lost_blocks, toBlock=last_block_number)
-        event_filter_cancel = self.contract.events.CancelOrder.createFilter(fromBlock=last_block_number - lost_blocks, toBlock=last_block_number)
-        event_filter_execute = self.contract.events.ExecuteOrder.createFilter(fromBlock=last_block_number - lost_blocks, toBlock=last_block_number)
-        events.extend(event_filter_create.get_all_entries())
-        events.extend(event_filter_cancel.get_all_entries())
-        events.extend(event_filter_execute.get_all_entries())
+        from_block = last_block_number - lost_blocks
+        to_block = last_block_number
+        event_types = [
+            self.contract.events.CreateOrder,
+            self.contract.events.CancelOrder,
+            self.contract.events.ExecuteOrder,
+        ]
+        events = [
+            event_entry
+            for event_type in event_types
+            for event_entry in self._get_event_entries(event_type, from_block, to_block)
+        ]
         return events
     
     @staticmethod
-    def create():
+    def create() -> SecondMarketContract:
         return SecondMarketContract()
     
     @staticmethod

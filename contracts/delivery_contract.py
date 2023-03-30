@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from web3 import Web3
 
 from abi.delivery_abi import ABI
@@ -5,7 +7,6 @@ from abi.delivery_abi import ABI
 from utils.node_rpc import NodeRpc
 from utils.config import DELIVERY_ADDRESS
 from utils.config import DELIVERY_CREATE_EVENT_CLASS
-from utils.config import DELIVERY_SET_EVENT_CLASS
 from utils.config import DELIVERY_CREATE_EVENT_CLASS
 from utils.config import DELIVERY_PAY_EVENT_CLASS
 from utils.config import DELIVERY_FINISH_EVENT_CLASS
@@ -19,20 +20,28 @@ class DeliveryContract():
         self.abi = ABI
         self.contract = self.web3.eth.contract(address=self.address, abi=self.abi)
 
+    def _get_event_entries(self, event, from_block, to_block) -> list:
+        event_filter = event.createFilter(fromBlock=from_block, toBlock=to_block)
+        return event_filter.get_all_entries()
+
     def get_new_events(self, last_block_number, lost_blocks) -> list:
-        events = []
-        event_filter_create = self.contract.events.CreateDeliveryRequest.createFilter(fromBlock=last_block_number - lost_blocks, toBlock=last_block_number)
-        #event_filter_set = self.contract.events.SetDeliveryTaskAmount.createFilter(fromBlock=last_block_number - lost_blocks, toBlock=last_block_number)
-        event_filter_pay = self.contract.events.PayDeliveryTaskAmount.createFilter(fromBlock=last_block_number - lost_blocks, toBlock=last_block_number)
-        event_filter_finish = self.contract.events.FinishDeliveryTask.createFilter(fromBlock=last_block_number - lost_blocks, toBlock=last_block_number)
-        events.extend(event_filter_create.get_all_entries())
-        #events.extend(event_filter_set.get_all_entries())
-        events.extend(event_filter_pay.get_all_entries())
-        events.extend(event_filter_finish.get_all_entries())
+        from_block = last_block_number - lost_blocks
+        to_block = last_block_number
+        event_types = [
+            self.contract.events.CreateDeliveryRequest,
+            self.contract.events.PayDeliveryTaskAmount,
+            self.contract.events.FinishDeliveryTask,
+            self.contract.events.CancelDeliveryTask,
+        ]
+        events = [
+            event_entry
+            for event_type in event_types
+            for event_entry in self._get_event_entries(event_type, from_block, to_block)
+        ]
         return events
     
     @staticmethod
-    def create():
+    def create() -> DeliveryContract:
         return DeliveryContract()
     
     @staticmethod
@@ -46,18 +55,6 @@ class DeliveryContract():
             }
         event_class = DELIVERY_CREATE_EVENT_CLASS
         return event_dto, event_class
-    
-    # @staticmethod
-    # def get_set_delivery_event_data(event_args) -> tuple:
-    #     event_dto = {
-    #         "deliveryTaskId": event_args.deliveryTaskId,
-    #         "poolId": event_args.poolId,
-    #         "tokenId": event_args.tokenId,
-    #         "amount": event_args.amount,
-    #         "bcbAmount": event_args.bcbAmount
-    #     }
-    #     event_class = DELIVERY_SET_EVENT_CLASS
-    #     return event_dto, event_class
     
     @staticmethod
     def get_pay_delivery_event_data(event_args) -> tuple:

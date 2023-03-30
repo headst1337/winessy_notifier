@@ -3,15 +3,17 @@ from contracts.second_market_contract import SecondMarketContract
 from contracts.winepool_contract import WinePoolContract
 
 
-class BaseContractClass():
-    def __init__(self):
-        self.delivery_contract = DeliveryContract.create()
-        self.second_market_contract = SecondMarketContract.create()
-        #self.wine_pool_contract = WinePoolContract.create()
+class BaseContractClass:
 
-    def get_new_events(self, param, lost_blocks):
+    def __init__(self) -> None:
+        self.contracts = [
+            DeliveryContract.create(),
+            SecondMarketContract.create(),
+            #WinePoolContract.create(),
+        ]
+
+    def get_new_events(self, param, lost_blocks) -> list:
         events = []
-        events.extend(self.delivery_contract.get_new_events(param, lost_blocks))
-        events.extend(self.second_market_contract.get_new_events(param, lost_blocks))
-        #events.extend(self.wine_pool_contract.get_new_events(param, lost_blocks))
+        for contract in self.contracts:
+            events.extend(contract.get_new_events(param, lost_blocks))
         return events

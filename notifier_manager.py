@@ -58,7 +58,7 @@ class WinessyNotifierManager:
         txn_hash = event.transactionHash.hex()
 
         self.logging.info(
-            f"New event detected: {event_name}, Args: {event_args}, Transaction hash: {txn_hash}")
+            f"\nNew event detected: {event_name}, \nArgs: {event_args}, \nTransaction hash: {txn_hash}")
 
         event_map = {
             'CreateOrder': (SecondMarketContract.get_create_order_event_data, 8),
@@ -72,7 +72,7 @@ class WinessyNotifierManager:
         if event_name in event_map:
             event_func, notifier_id = event_map[event_name]
             event_dto, event_class = event_func(event_args)
-            self.request.send_post_request(
+            self.request.handle_request(
                 event_dto, event_class, txn_hash, notifier_id=notifier_id)
         else:
             self.logging.warning(f"Unsupported event detected: {event_name}")
