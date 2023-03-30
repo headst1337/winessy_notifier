@@ -79,3 +79,13 @@ class DeliveryContract():
         }
         event_class = DELIVERY_FINISH_EVENT_CLASS
         return event_dto, event_class
+    
+    @staticmethod
+    def get_cancel_delivery_event_data(event_args) -> tuple:
+        event_dto = {
+            "deliveryTaskId": event_args.deliveryTaskId,
+            "poolId": event_args.poolId,
+            "tokenId": event_args.tokenId
+        }
+        event_class = DELIVERY_FINISH_EVENT_CLASS
+        return event_dto, event_class

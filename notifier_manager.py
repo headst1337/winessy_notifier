@@ -65,9 +65,9 @@ class WinessyNotifierManager:
             'CancelOrder': (SecondMarketContract.get_cancel_order_event_data, 9),
             'ExecuteOrder': (SecondMarketContract.get_execute_order_event_data, 10),
             'CreateDeliveryRequest': (DeliveryContract.get_create_delivery_event_data, 11),
-            #'SetDeliveryTaskAmount': (DeliveryContract.get_set_delivery_event_data, 12),
-            'PayDeliveryTaskAmount': (DeliveryContract.get_pay_delivery_event_data, 13),
-            'FinishDeliveryTask': (DeliveryContract.get_finish_delivery_event_data, 14)
+            'PayDeliveryTaskAmount': (DeliveryContract.get_pay_delivery_event_data, 12),
+            'FinishDeliveryTask': (DeliveryContract.get_finish_delivery_event_data, 13),
+            'CancelDeliveryTask': (DeliveryContract.get_cancel_delivery_event_data, 14)
         }
         if event_name in event_map:
             event_func, notifier_id = event_map[event_name]
