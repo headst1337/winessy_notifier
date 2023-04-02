@@ -63,6 +63,7 @@ class DeliveryContract():
             "deliveryTaskId": event_args.deliveryTaskId,
             "poolId": event_args.poolId,
             "tokenId": event_args.tokenId,
+            "tokenOwner": "some buyerAddress",
             "isInternal": event_args.isInternal,
             "amount": event_args.amount,
             "bcbAmount": event_args.bcbAmount
