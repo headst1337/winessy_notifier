@@ -36,7 +36,7 @@ class Request:
             "data_information": {
                 "dto": {
                     "notifier_id": notifier_id,
-                    "chain_id": 80001,
+                    "chain_id": 137,
                     "transaction_hash": txn_hash,
                     "node_creation_time": int(time.time()),
                     "_token_tc": "пока отключено",
